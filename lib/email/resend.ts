@@ -1,6 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy-load Resend client to avoid build-time errors when API key is missing
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    return null
+  }
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 interface LeadData {
   name?: string
@@ -17,7 +23,8 @@ interface Campaign {
 
 export async function sendLeadNotification(to: string, leadData: LeadData) {
   try {
-    if (!process.env.RESEND_API_KEY) {
+    const resend = getResendClient()
+    if (!resend) {
       console.log('Resend API key not configured, skipping email')
       return { success: false, error: 'Email service not configured' }
     }
@@ -67,7 +74,8 @@ export async function sendLeadNotification(to: string, leadData: LeadData) {
 
 export async function sendCampaignReminder(to: string, campaign: Campaign) {
   try {
-    if (!process.env.RESEND_API_KEY) {
+    const resend = getResendClient()
+    if (!resend) {
       console.log('Resend API key not configured, skipping email')
       return { success: false, error: 'Email service not configured' }
     }

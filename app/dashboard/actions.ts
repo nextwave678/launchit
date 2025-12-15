@@ -11,11 +11,11 @@ const projectSchema = z.object({
   budget: z.coerce.number().min(0, "Budget must be positive"),
   geography: z.string().optional(),
   business_type: z.enum(['service', 'saas', 'info_product', 'creator_tool'], {
-    errorMap: () => ({ message: "Please select a valid business type" }),
+    message: "Please select a valid business type",
   }),
   goal_mrr: z.coerce.number().min(0, "Goal MRR must be positive"),
   risk_tolerance: z.enum(['low', 'medium', 'high'], {
-    errorMap: () => ({ message: "Please select a valid risk tolerance" }),
+    message: "Please select a valid risk tolerance",
   }),
 })
 
