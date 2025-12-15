@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -29,7 +29,6 @@
     "react-dom": "19.2.0",
     "react-hook-form": "^7.67.0",
     "resend": "^6.5.2",
-    "snoowrap": "^1.23.0",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.1.13"
   },
