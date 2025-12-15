@@ -2,17 +2,22 @@ import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { rateLimitLeadCapture } from '@/lib/rate-limit'
 
-// Use service role to bypass RLS for public lead insertion
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
+// Lazy-load Supabase client to avoid build-time errors when env vars are missing
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Supabase configuration is missing')
+  }
+  
+  return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
-  }
-)
+  })
+}
 
 function calculateQualityScore(email: string, name: string, phone?: string): number {
   let score = 50 // Base score
@@ -74,6 +79,7 @@ export async function POST(request: Request) {
     const quality_score = calculateQualityScore(email, name, phone)
 
     // Insert lead
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: lead, error: leadError } = await supabaseAdmin
       .from('leads')
       .insert({
