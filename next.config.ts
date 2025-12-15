@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
-import webpack from "webpack";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  webpack: (config, { isServer, dir }) => {
+  webpack: (config, { isServer, dir, webpack }) => {
     // Fix for __dirname not being defined in Edge runtime
     if (!isServer) {
       config.resolve.fallback = {
